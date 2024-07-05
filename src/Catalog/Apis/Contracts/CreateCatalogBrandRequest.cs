@@ -1,5 +1,4 @@
-﻿
-namespace Catalog.Apis.Contracts;
+﻿namespace Catalog.Apis.Contracts;
 
 public sealed record CreateCatalogBrandRequest(string Brand);
 

@@ -1,7 +1,4 @@
-﻿using Catalog.Infrastructure.IntegrationEvents;
-using MassTransit.Transports;
-
-namespace Catalog.Apis;
+﻿namespace Catalog.Apis;
 
 public static class CatalogItemApi
 {
@@ -64,17 +61,18 @@ public static class CatalogItemApi
         var loadedItem = await services.Context.CatalogItems
                                                     .Include(ci => ci.CatalogBrand)
                                                     .Include(ci => ci.CatalogCategory)
-                                                    .FirstAsync(x => x.Id == item.Id);
-         
-        await services.Publish.Publish(
-            new CatalogItemAddedEvent(
-                loadedItem.Name, 
-                loadedItem.Description, 
-                loadedItem.CatalogCategory.Category, 
-                loadedItem.CatalogBrand.Brand,
-                loadedItem.Slug,
-                hintUrl));
-         
+                                                    .FirstAsync(x => x.Id == item.Id, cancellationToken);
+
+        await services.Publish.Publish(new CatalogItemAddedEvent
+                                    (
+                                        loadedItem.Name,
+                                        loadedItem.Description,
+                                        loadedItem.CatalogCategory.Category,
+                                        loadedItem.CatalogBrand.Brand,
+                                        loadedItem.Slug,
+                                        hintUrl
+                                    ), cancellationToken);
+
         return TypedResults.Created(hintUrl);
     }
 
@@ -126,15 +124,17 @@ public static class CatalogItemApi
         var loadedItem = await services.Context.CatalogItems
                                             .Include(ci => ci.CatalogBrand)
                                             .Include(ci => ci.CatalogCategory)
-                                            .FirstAsync(x => x.Id == Item.Id);
+                                            .FirstAsync(x => x.Id == Item.Id, cancellationToken: cancellationToken);
 
         await services.Publish.Publish(
-            new CatalogItemChangedEvent(
+            new CatalogItemChangedEvent
+            (
                 loadedItem.Name,
                 loadedItem.Description,
                 loadedItem.CatalogCategory.Category,
                 loadedItem.CatalogBrand.Brand,
-                loadedItem.Slug));
+                loadedItem.Slug
+            ), cancellationToken);
 
         return TypedResults.Created($"/api/v1/items/{Item.Id}");
     }
@@ -180,6 +180,13 @@ public static class CatalogItemApi
 
         services.Context.CatalogItems.Remove(item);
         await services.Context.SaveChangesAsync(cancellationToken);
+
+        await services.Publish.Publish
+        (
+            new CatalogItemDeletedEvent(item.Slug),
+            cancellationToken
+        );
+
         return TypedResults.NoContent();
     }
 
@@ -193,9 +200,11 @@ public static class CatalogItemApi
         }
 
         var item = await services.Context.CatalogItems
-                                         .Include(x => x.CatalogBrand)
-                                         .Include(x => x.CatalogCategory)
-                                         .FirstOrDefaultAsync(ci => ci.Id == id);
+                                        .AsQueryable()
+                                        .Include(x => x.CatalogBrand)
+                                        .Include(x => x.CatalogCategory)
+                                        .AsSplitQuery()
+                                        .FirstOrDefaultAsync(ci => ci.Id == id);
         if (item is null)
         {
             return TypedResults.NotFound();
@@ -221,21 +230,24 @@ public static class CatalogItemApi
     CancellationToken cancellationToken)
     {
         var items = await services.Context.CatalogItems
-                                          .Include(x => x.CatalogBrand)
-                                          .Include(x => x.CatalogCategory)
-                                          .Select(x => new CatalogItemResponse(x.Id,
-                                                                               x.Name,
-                                                                               x.Slug,
-                                                                               x.Description,
-                                                                               x.CatalogBrandId,
-                                                                               x.CatalogBrand.Brand,
-                                                                               x.CatalogCategoryId,
-                                                                               x.CatalogCategory.Category,
-                                                                               x.Price,
-                                                                               x.AvailableStock,
-                                                                               x.MaxStockThreshold))
-                                          .OrderBy(c => c.Id)
-                                          .ToListAsync(cancellationToken);
+                                        .Include(x => x.CatalogBrand)
+                                        .Include(x => x.CatalogCategory)
+                                        .Select(x => new CatalogItemResponse
+                                        (
+                                            x.Id,
+                                            x.Name,
+                                            x.Slug,
+                                            x.Description,
+                                            x.CatalogBrandId,
+                                            x.CatalogBrand.Brand,
+                                            x.CatalogCategoryId,
+                                            x.CatalogCategory.Category,
+                                            x.Price,
+                                            x.AvailableStock,
+                                            x.MaxStockThreshold
+                                        ))
+                                        .OrderBy(c => c.Id)
+                                        .ToListAsync(cancellationToken);
 
         return TypedResults.Ok<IEnumerable<CatalogItemResponse>>(items);
     }
@@ -258,9 +270,9 @@ public static class CatalogItemApi
         }
 
         var item = await services.Context.CatalogItems
-                                 .Include(x => x.CatalogBrand)
-                                 .Include(x => x.CatalogCategory)
-                                 .FirstOrDefaultAsync(ci => ci.Id == id);
+                                .Include(x => x.CatalogBrand)
+                                .Include(x => x.CatalogCategory)
+                                .FirstOrDefaultAsync(ci => ci.Id == id);
         if (item is null)
         {
             return TypedResults.NotFound();
@@ -274,7 +286,7 @@ public static class CatalogItemApi
         {
             return TypedResults.BadRequest("File is not selected or is empty.");
         }
-         
+
         using (var ms = new MemoryStream())
         {
             await file.CopyToAsync(ms);

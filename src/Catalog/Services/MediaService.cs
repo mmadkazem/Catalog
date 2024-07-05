@@ -22,7 +22,7 @@ public class MediaService(IOptions<CatalogOptions> options)
 
         var fileName = Guid.NewGuid().ToString();
 
-        PutObjectRequest request = new PutObjectRequest
+        PutObjectRequest request = new()
         {
             BucketName = _options.BucketName,
             Key = fileName,
@@ -33,7 +33,7 @@ public class MediaService(IOptions<CatalogOptions> options)
 
         Console.WriteLine($"File '{fileName}' uploaded successfully.");
 
-        GetPreSignedUrlRequest urlRequest = new GetPreSignedUrlRequest
+        GetPreSignedUrlRequest urlRequest = new()
         {
             BucketName = _options.BucketName,
             Key = fileName,

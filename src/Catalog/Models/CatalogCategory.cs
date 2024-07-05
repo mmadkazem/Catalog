@@ -1,6 +1,4 @@
-﻿
-
-namespace Catalog.Models;
+﻿namespace Catalog.Models;
 
 public class CatalogCategory
 {
@@ -19,14 +17,14 @@ public class CatalogCategory
         if (category.Parent is not null)
             return $"{GetPath(category.Parent)}/{category.Category}";
 
-        if(category.Id == Id)
+        if (category.Id == Id)
             return null;
 
         return category.Category;
     }
 
-    public static CatalogCategory Create(string category, int? parentId) 
-        => new CatalogCategory
+    public static CatalogCategory Create(string category, int? parentId)
+        => new()
         {
             Category = category,
             ParentId = parentId

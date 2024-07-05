@@ -1,6 +1,7 @@
 ﻿namespace Catalog.Apis.Contracts;
 
-public sealed record CatalogItemResponse(
+public sealed record CatalogItemResponse
+(
     int Id,
     string Name,
     string Slug,
@@ -12,4 +13,4 @@ public sealed record CatalogItemResponse(
     decimal Price,
     int AvailableStock,
     int MaxStockThreshold
-    );
+);

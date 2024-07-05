@@ -1,5 +1,4 @@
-﻿
-namespace Catalog.Models;
+﻿namespace Catalog.Models;
 
 public class CatalogItem
 {
@@ -23,7 +22,7 @@ public class CatalogItem
 
     public static CatalogItem Create(string name, string description, int maxStockThreshold, int brandId, int categoryId, decimal price = default)
     {
-        var newItem = new CatalogItem
+        CatalogItem newItem = new()
         {
             Name = name,
             CatalogBrandId = brandId,
@@ -46,6 +45,7 @@ public class CatalogItem
         Description = description;
         Slug = name.ToKebabCase();
     }
+
     public void SetMaxStockThreshold(int maxStockThreshold)
     {
         if (maxStockThreshold <= 0)

@@ -1,7 +1,7 @@
 ﻿namespace Catalog.Apis.Contracts;
 
-public sealed record UpdateCatalogCategoryRequest(int Id,string Category);
- 
+public sealed record UpdateCatalogCategoryRequest(int Id, string Category);
+
 public sealed class UpdateCatalogCategoryRequestValidator : AbstractValidator<UpdateCatalogCategoryRequest>
 {
     public UpdateCatalogCategoryRequestValidator()

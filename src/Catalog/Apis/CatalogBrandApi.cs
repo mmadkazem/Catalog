@@ -105,9 +105,10 @@ public static class CatalogBrandApi
     CancellationToken cancellationToken)
     {
         var brands = await services.Context.CatalogBrands
-                                           .OrderBy(c => c.Id)
-                                           .Select(x => new CatalogBrandResponse(x.Id, x.Brand))
-                                           .ToListAsync(cancellationToken);
+                                    .AsQueryable()
+                                    .OrderBy(c => c.Id)
+                                    .Select(x => new CatalogBrandResponse(x.Id, x.Brand))
+                                    .ToListAsync(cancellationToken);
 
         return TypedResults.Ok<IEnumerable<CatalogBrandResponse>>(brands);
     }

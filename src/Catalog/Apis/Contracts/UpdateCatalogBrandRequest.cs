@@ -1,6 +1,6 @@
 ﻿namespace Catalog.Apis.Contracts;
 
-public sealed record UpdateCatalogBrandRequest(int Id,string Brand);
+public sealed record UpdateCatalogBrandRequest(int Id, string Brand);
 
 public sealed class UpdateCatalogBrandRequestValidator : AbstractValidator<UpdateCatalogBrandRequest>
 {

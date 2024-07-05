@@ -11,7 +11,7 @@ public class CatalogBrand
     public void Update(string brand) => Brand = brand;
 
     public static CatalogBrand Create(string brand)
-        => new CatalogBrand
+        => new()
         {
             Brand = brand
         };

@@ -1,12 +1,13 @@
-﻿
-namespace Catalog.Apis.Contracts;
+﻿namespace Catalog.Apis.Contracts;
 
-public sealed record UpdateCatalogItemRequest(
+public sealed record UpdateCatalogItemRequest
+(
     int Id,
     string Name,
     string Description,
     int CatalogId,
-    int BrandId);
+    int BrandId
+);
 
 public sealed class UpdateCatalogItemRequestValidator : AbstractValidator<UpdateCatalogItemRequest>
 {

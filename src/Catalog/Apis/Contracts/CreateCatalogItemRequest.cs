@@ -1,12 +1,13 @@
-﻿
-namespace Catalog.Apis.Contracts;
+﻿namespace Catalog.Apis.Contracts;
 
-public sealed record CreateCatalogItemRequest(
+public sealed record CreateCatalogItemRequest
+(
     string Name,
     string Description,
     int CatalogId,
     int BrandId,
-    int MaxStockThreshold);
+    int MaxStockThreshold
+);
 
 public sealed class CreateCatalogItemRequestValidator : AbstractValidator<CreateCatalogItemRequest>
 {
@@ -29,6 +30,6 @@ public sealed class CreateCatalogItemRequestValidator : AbstractValidator<Create
             .NotNull();
 
         RuleFor(x => x.MaxStockThreshold)
-             .GreaterThan(0);
+            .GreaterThan(0);
     }
 }

@@ -35,8 +35,8 @@ public static class CatalogCategoryApi
         }
 
         var hasCategory = await services.Context.CatalogCategories.AnyAsync(x => x.Category == categoryToCreate.Category &&
-                                                                                 x.ParentId == categoryToCreate.ParentId,
-                                                                                 cancellationToken);
+                                                                                x.ParentId == categoryToCreate.ParentId,
+                                                                                cancellationToken);
         if (hasCategory)
         {
             return TypedResults.BadRequest($"A Category with the name '{categoryToCreate.Category}' in this level already exists.");
